@@ -1,9 +1,24 @@
 from distutils.log import debug
 import io, os
-from flask import Flask, request, send_file
+from flask import Flask, request, send_file, jsonify
 import fitz
 
 flask_app = Flask("PDF Toolkit")
+
+@flask_app.route('/pdftoolkit/pdfinfo', methods = ["POST"])
+def pdf_info():
+
+    inputFile = request.files['file']   
+    file_handle = fitz.open(stream=inputFile.stream.read())
+    page_handle = file_handle[0]
+
+    result = {
+        'page_count': len(file_handle),
+        'width': round(page_handle.rect.width),
+        'height': round(page_handle.rect.height)
+    }
+
+    return jsonify(result)
 
 @flask_app.route('/pdftoolkit/health', methods = ["GET"])
 def health_check():
@@ -11,7 +26,6 @@ def health_check():
 
 @flask_app.route('/pdftoolkit/addstamp', methods = ["POST"])
 def add_stamp():
-
     pagenum = request.args.get('pagenum')
     
     if not pagenum:
