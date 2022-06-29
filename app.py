@@ -12,29 +12,31 @@ def health_check():
 @flask_app.route('/pdftoolkit/addstamp', methods = ["POST"])
 def add_stamp():
 
-    # Получаем параметры 
-    # TODO дефолтные значения
     pagenum = request.args.get('pagenum')
     
     if not pagenum:
-        pagenum = 0
+        pagenum = 1
+    pagenum = int(pagenum)
 
     x0 = request.args.get('x0')
-
     if not x0:
         return "Не передана координата x0", 400 
+    x0 = int(x0)
 
     y0 = request.args.get('y0')
     if not y0:
         return "Не передана координата y0", 400 
+    y0 = int(y0)
 
     x1 = request.args.get('x1')
     if not x1:
         return "Не передана координата x1", 400
+    x1 = int(x1)
 
     y1 = request.args.get('y1')
     if not y1:
         return "Не передана координата y1", 400
+    y1 = int(y1)
 
     inputFile = request.files['inputFile']
     stampFile = request.files['stampFile']
@@ -43,11 +45,11 @@ def add_stamp():
     # TODO проверки
     file_handle = fitz.open(stream=inputFile.stream.read())
     page_handle = file_handle[pagenum - 1]
-    
-    if (x0 > x1) or (y0 > y1):
+
+    if ((x0 > x1) or (y0 > y1)):
         return "Координаты штампа заданы неверно.", 400
 
-    stamp_rectangle = fitz.Rect(int(x0), int(y0), int(x1), int(y1))
+    stamp_rectangle = fitz.Rect(x0, y0, x1, y1)
 
     # Перед вставкой картинки нормализуем страницу
     if not page_handle.is_wrapped: 
