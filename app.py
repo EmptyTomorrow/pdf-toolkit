@@ -26,6 +26,9 @@ def add_stamp():
     # TODO проверки
     file_handle = fitz.open(stream=inputFile.stream.read())
     page_handle = file_handle[pagenum - 1]
+    
+    if (x0 > x1) or (y0 > y1):
+        return "Координаты штампа заданы неверно.", 400
 
     stamp_rectangle = fitz.Rect(x0, y0, x1, y1)
 
