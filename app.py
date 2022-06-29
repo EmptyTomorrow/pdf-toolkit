@@ -5,7 +5,11 @@ import fitz
 
 flask_app = Flask("PDF Toolkit")
 
-@flask_app.route('/addstamp', methods = ["POST"])
+@flask_app.route('/pdftoolkit/health', methods = ["GET"])
+def health_check():
+    return "1"
+
+@flask_app.route('/pdftoolkit/addstamp', methods = ["POST"])
 def add_stamp():
 
     # Получаем параметры 
